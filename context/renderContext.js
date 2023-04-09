@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const RenderContext = createContext();
 
@@ -6,12 +6,12 @@ export const RenderProvider = ({ children }) => {
   const [renderParams, setRenderParams] = useState({
     n1: 124,
     n2: 122,
-    color: "#FFCBE1",
+    color: "#000",
     backgroundColor: "#131517",
-    bgEnabled: true,
-    xMargin: 5,
-    outsideMargin: 0,
-    distortion: 94,
+    bgEnabled: false,
+    xMargin: 300,
+    outsideMargin: 300,
+    distortion: 100,
     shouldRecalculate: true,
     cWidth: 600,
     cHeight: 600,

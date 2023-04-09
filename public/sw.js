@@ -26,10 +26,9 @@ function randomInteger(min, max) {
 async function gridNoise(animationData, canvas) {
   let NUM_PARTICLES;
   (THICKNESS = Math.pow(300, 2)),
-    (SPACING = 4),
-    (MARGIN = 100),
-    (COLOR = 220),
-    (DRAG = 0.95),
+    (SPACING = 1),
+    (MARGIN = 700),
+    (DRAG = 0.9),
     (EASE = 0.25);
   let dx, dy, mx, my, d, t, f, a, b, i, n, w, h, p, s, r, c;
 
@@ -49,7 +48,7 @@ async function gridNoise(animationData, canvas) {
   let columns = w / (MARGIN * 2 + SPACING);
   let rows = h / (MARGIN * 2 + SPACING);
 
-  NUM_PARTICLES = (ROWS = rows) * (COLS = columns);
+  NUM_PARTICLES = (rows * columns) / 2;
 
   let particle = {
     vx: 0,
@@ -58,16 +57,18 @@ async function gridNoise(animationData, canvas) {
     y: 0,
   };
 
+  console.log(NUM_PARTICLES);
   for (i = 0; i < NUM_PARTICLES; i++) {
     p = Object.create(particle);
-    p.x = p.ox = MARGIN + SPACING * (i % COLS);
-    p.y = p.oy = MARGIN + SPACING * Math.floor(i / COLS);
+    p.x = p.ox = MARGIN + SPACING * (i % columns);
+    p.y = p.oy = MARGIN + SPACING * Math.floor(i / columns);
 
     list[i] = p;
   }
 
   function renderParticles() {
     b = (a = ctx.createImageData(w, h)).data;
+    console.log(b);
     const background = hex2rgba(animationData.backgroundColor);
     const fillColor = hex2rgba(animationData.color);
 
@@ -115,8 +116,8 @@ async function gridNoise(animationData, canvas) {
       p.vy += f * Math.sin(t);
     }
 
-    let noisex = noise.perlin2(p.x / animationData.n1, p.y / animationData.n2);
-    let noisey = noise.perlin2(p.x / animationData.n2, p.y / animationData.n1);
+    let noisex = noise.simplex2(p.x / animationData.n1, p.y / animationData.n2);
+    let noisey = noise.simplex2(p.x / animationData.n2, p.y / animationData.n1);
 
     p.x = p.x + distortion * noisex;
     p.y = p.y + distortion * noisey;

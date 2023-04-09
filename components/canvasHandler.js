@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import { Wrapper, Canvas, CanvasContainer } from "./styles";
-import { RenderContext, ExportContext } from "../context/contexts";
-import gridNoise from "../effects/grid-noise";
+import { useContext, useEffect, useRef, useState } from "react";
+import { ExportContext, RenderContext } from "../context/contexts";
+import { Canvas, CanvasContainer, Wrapper } from "./styles";
 
 function isOffscreenCavnasSupported(canvas) {
   return canvas.transferControlToOffscreen !== undefined;
@@ -12,7 +11,6 @@ const CanvasComponent = () => {
   const offscreenCanvasRef = useRef(undefined);
   const workerRef = useRef(undefined);
   const [offscreenTransfered, setOffscreenTransfered] = useState(false);
-  const [offscreenSupported, setOffscreenSupported] = useState(false);
 
   const context = useContext(RenderContext);
   const exportContext = useContext(ExportContext);
@@ -32,7 +30,6 @@ const CanvasComponent = () => {
 
         worker.postMessage({ canvas: offscreen }, [offscreen]);
         setOffscreenTransfered(true);
-        setOffscreenSupported(true);
 
         offscreenCanvasRef.current = offscreen;
         workerRef.current = worker;
@@ -43,18 +40,10 @@ const CanvasComponent = () => {
   }, []);
 
   useEffect(() => {
-    if (offscreenCanvasRef && workerRef && offscreenSupported) {
+    if (offscreenCanvasRef && workerRef) {
       const { current: worker } = workerRef;
 
       worker.postMessage({ type: "run_canvas", animData: renderParams });
-    } else {
-      const { current: canvas } = canvasRef;
-      initializeCanvas(canvas, null, null);
-
-      if (!isOffscreenCavnasSupported(canvas)) {
-        console.log("offScreen canvas not supported");
-        gridNoise(renderParams, canvas);
-      }
     }
   }, [renderParams]);
 
